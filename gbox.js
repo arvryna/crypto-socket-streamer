@@ -8,6 +8,15 @@ const socket = new WebSocket(url);
 
 console.log(socket)
 
+socket.onopen = () => {
+    console.log("Client connected with socket...")
+    socket.send("Ping")
+}
+
+socket.onclose = () => {
+    console.log("Socket closed with socket...")
+}
+
 socket.onmessage = function(event){
     console.log(event);
 }

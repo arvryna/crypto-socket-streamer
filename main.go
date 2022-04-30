@@ -8,9 +8,35 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// TODO:
+
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+}
+
+func reader(connection *websocket.Conn) {
+	// ping/pong
+	for {
+
+		msgType, data, err := connection.ReadMessage()
+		if err != nil {
+			log.Println("Client error, terminating connection", err, connection.RemoteAddr())
+			connection.Close()
+			return
+		}
+
+		msg := string(data)
+		fmt.Println("Received", string(msg), "client", connection.RemoteAddr())
+
+		if msg == "Ping" {
+			err = connection.WriteMessage(msgType, []byte("Pong"))
+			if err != nil {
+				log.Println("Writing failed to client", err)
+			}
+		}
+
+	}
 }
 
 func handleWss(w http.ResponseWriter, r *http.Request) {
@@ -25,8 +51,9 @@ func handleWss(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("Can't upgrade websocket", err)
 	}
 
-	fmt.Println("Client connected..", ws.RemoteAddr())
+	reader(ws)
 
+	fmt.Println("Client connected..", ws.RemoteAddr())
 }
 
 func setupServer() {
