@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -69,6 +70,31 @@ func setupServer() {
 
 }
 
+// Fetcher
+func fetchMarket() {
+	url := "wss://stream.data.alpaca.markets/v1beta1/crypto"
+
+	auth := map[string]string{"action": "auth", "key": "PK4WJX5BHJZBRYK4DGJQ", "secret": "yjdiafw56zgxVyR48LHrXCuCoSBTK7gAe5Vbrdv1"}
+
+	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
+	if err != nil {
+		log.Fatal("Can't connect to Market socket", err)
+	}
+
+	conn.WriteJSON(auth)
+
+	for {
+		_, message, err := conn.ReadMessage()
+		if err != nil {
+			log.Println("read:", err)
+			return
+		}
+		log.Printf("recv: %s", message)
+	}
+}
+
 func main() {
-	setupServer()
+	go setupServer()
+	go fetchMarket()
+	time.Sleep(100000 * time.Second)
 }
