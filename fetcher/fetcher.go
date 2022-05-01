@@ -4,32 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strconv"
-	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-var QuoteChan chan Quote
-var TradeChan chan Trade
-
-type Quote struct {
-	Symbol string `json:"S"`
-}
-
-type Trade struct {
-	Symbol string `json:"S"`
-}
-
-type marketData struct {
-	Type   string  `json:"T"`
-	Symbol string  `json:"S"`
-	Price  float64 `json:"p"`
-	Size   float64 `json:"s"`
-	Ask    float64 `json:"ap"`
-	Bid    float64 `json:"bp"`
-	Time   string  `json:"t"`
-}
+var (
+	QuoteChan chan Quote
+	TradeChan chan Trade
+)
 
 func fetchMessages(conn *websocket.Conn) {
 	fmt.Println("Fetching markets..")
@@ -52,6 +34,8 @@ func fetchMessages(conn *websocket.Conn) {
 		if market.Type == "q" {
 			QuoteChan <- Quote{
 				Symbol: market.Symbol,
+				Ask:    market.Ask,
+				Bid:    market.Bid,
 			}
 		}
 		// if market.Type == "t" {
@@ -63,13 +47,6 @@ func fetchMessages(conn *websocket.Conn) {
 }
 
 const BUFFER = 10
-
-func chanTest() {
-	for i := 1; i < 100; i++ {
-		time.Sleep(1 * time.Second)
-		QuoteChan <- Quote{Symbol: strconv.Itoa(i)}
-	}
-}
 
 func Init() {
 	fmt.Println("Starting fetcher...")
@@ -92,5 +69,4 @@ func Init() {
 	subscribe := `{"action": "subscribe", "trades":["ETHUSD"], "quotes":["ETHUSD"], "bars":["ETHUSD"]}`
 	conn.WriteMessage(1, []byte(subscribe))
 	fetchMessages(conn)
-	// chanTest()
 }
