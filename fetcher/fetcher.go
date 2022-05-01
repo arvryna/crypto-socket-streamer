@@ -4,17 +4,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-var quoteChan chan string
-var tradeChan chan string
+var QuoteChan chan Quote
+var TradeChan chan Trade
 
 type Quote struct {
+	Symbol string `json:"S"`
 }
 
 type Trade struct {
+	Symbol string `json:"S"`
 }
 
 type marketData struct {
@@ -28,6 +32,7 @@ type marketData struct {
 }
 
 func fetchMessages(conn *websocket.Conn) {
+	fmt.Println("Fetching markets..")
 	for {
 		_, data, err := conn.ReadMessage()
 		if err != nil {
@@ -45,15 +50,24 @@ func fetchMessages(conn *websocket.Conn) {
 		market := markets[0]
 
 		if market.Type == "q" {
-			fmt.Println("Fetching Quote", market.Symbol, market.Type)
+			QuoteChan <- Quote{
+				Symbol: market.Symbol,
+			}
 		}
-		if market.Type == "t" {
-			fmt.Println("Fetching Trade", market.Symbol, market.Type)
-		}
+		// if market.Type == "t" {
+		// 	TradeChan <- Trade{
+		// 		Symbol: market.Symbol,
+		// 	}
+		// }
 	}
 }
 
+const BUFFER = 10
+
 func Init() {
+	// Initiaze channels:
+	QuoteChan = make(chan Quote, BUFFER)
+	TradeChan = make(chan Trade, BUFFER)
 	url := "wss://stream.data.alpaca.markets/v1beta1/crypto"
 
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
@@ -68,5 +82,13 @@ func Init() {
 	// Subscribe to these events
 	subscribe := `{"action": "subscribe", "trades":["ETHUSD"], "quotes":["ETHUSD"], "bars":["ETHUSD"]}`
 	conn.WriteMessage(1, []byte(subscribe))
-	fetchMessages(conn)
+	// fetchMessages(conn)
+	chanTest()
+}
+
+func chanTest() {
+	for i := 1; i < 100; i++ {
+		time.Sleep(1 * time.Second)
+		QuoteChan <- Quote{Symbol: strconv.Itoa(i)}
+	}
 }

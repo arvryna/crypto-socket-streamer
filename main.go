@@ -29,12 +29,25 @@ func reader(connection *websocket.Conn) {
 		}
 
 		msg := string(data)
-		fmt.Println("Received", string(msg), "client", connection.RemoteAddr())
+		fmt.Println("Received", string(msg), "from client", connection.RemoteAddr())
 
-		if msg == "Ping" {
+		if msg == "Ping" { // Send ping-pong in separate go routine as health checks
 			err = connection.WriteMessage(msgType, []byte("Pong"))
 			if err != nil {
 				log.Println("Writing failed to client", err)
+			}
+		}
+
+		// you need to check if trading data is requested in frontend, before streaming the data out
+		if true {
+			// first lets try to run this not in a separate go routine
+			for {
+				quote := <-fetcher.QuoteChan
+				fmt.Println("Data from channel", quote.Symbol)
+				err := connection.WriteMessage(msgType, []byte(quote.Symbol))
+				if err != nil {
+					log.Println("Error sending Quote data to client via socket", err)
+				}
 			}
 		}
 
@@ -42,7 +55,7 @@ func reader(connection *websocket.Conn) {
 }
 
 func handleWss(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Connecting to WSS")
+	fmt.Println("Connection request from Client")
 	// Allow cross origin
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
@@ -69,6 +82,13 @@ func setupServer() {
 	// Setup server
 	http.ListenAndServe(":8080", nil)
 
+}
+
+func drainMarketData() {
+	for {
+		quote := <-fetcher.QuoteChan
+		fmt.Println("Data from channel", quote.Symbol)
+	}
 }
 
 // Fetcher
