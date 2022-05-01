@@ -58,11 +58,12 @@ func reader(connection *websocket.Conn) {
 			// first lets try to run this not in a separate go routine
 			for {
 				quote := <-fetcher.QuoteChan
-				fmt.Println("Data from channel", quote.Symbol)
 				quoteString := fmt.Sprintf("%v:%v:%v", quote.Symbol, quote.Ask, quote.Bid)
 				err := connection.WriteMessage(msgType, []byte(quoteString))
 				if err != nil {
-					log.Println("Error sending Quote data to client via socket", err)
+					log.Println("Error sending data to connection", err, connection.RemoteAddr(), "Closing connection")
+					connection.Close()
+					return
 				}
 			}
 		}
