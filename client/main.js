@@ -22,14 +22,14 @@ socket.onclose = () => {
 }
 
 socket.onmessage = function(event){
-    const newTrade = document.createElement('div')
-    newTrade.className = 'newTrades'
-    newTrade.innerHTML = `<b>data</b>${event}`
-    trades.appendChild(newTrade)
+    const newQuote = document.createElement('div')
+    newQuote.className = 'newQuote'
+    newQuote.innerHTML = `<b>${event.data}</b>`
+    quotes.appendChild(newQuote)
 
-    var elements = document.getElementsByClassName('newTrades')
+    var elements = document.getElementsByClassName('newQuote')
     if(elements.length > 20){
-        trades.removeChild(elements[0])
+        quotes.removeChild(elements[0])
     }
 
 }

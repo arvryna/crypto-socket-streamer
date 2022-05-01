@@ -33,7 +33,6 @@ func handleWsConn(w http.ResponseWriter, r *http.Request) {
 
 // These are internally spawned as individual go-routines
 func reader(connection *websocket.Conn) {
-	// ping/pong
 	for {
 		msgType, data, err := connection.ReadMessage()
 		if err != nil {
@@ -45,7 +44,8 @@ func reader(connection *websocket.Conn) {
 		msg := string(data)
 		fmt.Println("Received", string(msg), "from client", connection.RemoteAddr())
 
-		if msg == "Ping" { // Send ping-pong in separate go routine as health checks
+		// Send ping-pong in separate go routine as health checks
+		if msg == "Ping" {
 			err = connection.WriteMessage(msgType, []byte("Pong"))
 			if err != nil {
 				log.Println("Writing failed to client", err)
@@ -53,12 +53,14 @@ func reader(connection *websocket.Conn) {
 		}
 
 		// you need to check if trading data is requested in frontend, before streaming the data out
+		// implement authentication
 		if true {
 			// first lets try to run this not in a separate go routine
 			for {
 				quote := <-fetcher.QuoteChan
 				fmt.Println("Data from channel", quote.Symbol)
-				err := connection.WriteMessage(msgType, []byte(quote.Symbol))
+				quoteString := fmt.Sprintf("%v:%v:%v", quote.Symbol, quote.Ask, quote.Bid)
+				err := connection.WriteMessage(msgType, []byte(quoteString))
 				if err != nil {
 					log.Println("Error sending Quote data to client via socket", err)
 				}
