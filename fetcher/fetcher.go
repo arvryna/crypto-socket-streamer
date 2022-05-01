@@ -82,8 +82,8 @@ func Init() {
 	// Subscribe to these events
 	subscribe := `{"action": "subscribe", "trades":["ETHUSD"], "quotes":["ETHUSD"], "bars":["ETHUSD"]}`
 	conn.WriteMessage(1, []byte(subscribe))
-	// fetchMessages(conn)
-	chanTest()
+	fetchMessages(conn)
+	// chanTest()
 }
 
 func chanTest() {

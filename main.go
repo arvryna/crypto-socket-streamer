@@ -17,10 +17,10 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+// These are internally spawned as individual go-routines
 func reader(connection *websocket.Conn) {
 	// ping/pong
 	for {
-
 		msgType, data, err := connection.ReadMessage()
 		if err != nil {
 			log.Println("Client error, terminating connection", err, connection.RemoteAddr())

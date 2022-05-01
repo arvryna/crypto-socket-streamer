@@ -1,0 +1,12 @@
+body{
+    background: black;
+    color: green;
+    font-family:monospace;
+}
+
+.panel{
+    padding: 10px;
+    height: 300;
+    width: 200;
+    border: solid lightgreen 5px
+}
