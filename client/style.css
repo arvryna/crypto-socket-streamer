@@ -7,6 +7,6 @@ body{
 .panel{
     padding: 10px;
     height: 300;
-    width: 200;
+    width: 300;
     border: solid lightgreen 5px
 }

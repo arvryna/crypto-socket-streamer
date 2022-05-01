@@ -64,7 +64,16 @@ func fetchMessages(conn *websocket.Conn) {
 
 const BUFFER = 10
 
+func chanTest() {
+	for i := 1; i < 100; i++ {
+		time.Sleep(1 * time.Second)
+		QuoteChan <- Quote{Symbol: strconv.Itoa(i)}
+	}
+}
+
 func Init() {
+	fmt.Println("Starting fetcher...")
+
 	// Initiaze channels:
 	QuoteChan = make(chan Quote, BUFFER)
 	TradeChan = make(chan Trade, BUFFER)
@@ -84,11 +93,4 @@ func Init() {
 	conn.WriteMessage(1, []byte(subscribe))
 	fetchMessages(conn)
 	// chanTest()
-}
-
-func chanTest() {
-	for i := 1; i < 100; i++ {
-		time.Sleep(1 * time.Second)
-		QuoteChan <- Quote{Symbol: strconv.Itoa(i)}
-	}
 }

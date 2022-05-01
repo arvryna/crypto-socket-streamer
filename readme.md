@@ -1,2 +1,2 @@
 # Flow of data
-->> fetcher(FANIN) -> emitter(FANOUT) ->> client
+->> fetcher(FAN-IN) -> emitter(FAN-OUT) ->> client
