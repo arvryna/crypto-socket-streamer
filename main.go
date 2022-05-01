@@ -75,13 +75,14 @@ func fetchMarket() {
 	url := "wss://stream.data.alpaca.markets/v1beta1/crypto"
 
 	auth := map[string]string{"action": "auth", "key": "PK4WJX5BHJZBRYK4DGJQ", "secret": "yjdiafw56zgxVyR48LHrXCuCoSBTK7gAe5Vbrdv1"}
-
+	subscribe := `{"action": "subscribe", "trades":["ETHUSD"], "quotes":["ETHUSD"], "bars":["ETHUSD"]}`
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		log.Fatal("Can't connect to Market socket", err)
 	}
 
 	conn.WriteJSON(auth)
+	conn.WriteMessage(1, []byte(subscribe))
 
 	for {
 		_, message, err := conn.ReadMessage()
