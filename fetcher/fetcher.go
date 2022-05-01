@@ -14,7 +14,6 @@ var (
 )
 
 func fetchMessages(conn *websocket.Conn) {
-	fmt.Println("Fetching markets..")
 	for {
 		_, data, err := conn.ReadMessage()
 		if err != nil {
@@ -38,11 +37,13 @@ func fetchMessages(conn *websocket.Conn) {
 				Bid:    market.Bid,
 			}
 		}
-		// if market.Type == "t" {
-		// 	TradeChan <- Trade{
-		// 		Symbol: market.Symbol,
-		// 	}
-		// }
+		if market.Type == "t" {
+			TradeChan <- Trade{
+				Symbol: market.Symbol,
+				Price:  market.Price,
+				Size:   market.Size,
+			}
+		}
 	}
 }
 

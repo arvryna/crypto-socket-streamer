@@ -21,15 +21,35 @@ socket.onclose = () => {
     console.log("Socket closed with socket...")
 }
 
-socket.onmessage = function(event){
-    const newQuote = document.createElement('div')
-    newQuote.className = 'newQuote'
-    newQuote.innerHTML = `<b>${event.data}</b>`
-    quotes.appendChild(newQuote)
+socket.onmessage = function (event) {
+    const LIMIT = 20
+    const marketData = JSON.parse(event.data)
 
-    var elements = document.getElementsByClassName('newQuote')
-    if(elements.length > 20){
-        quotes.removeChild(elements[0])
+    if (marketData.type == 1) {
+        // Append Quote data (Recycle after certain LIMIT)
+        const newQuote = document.createElement('div')
+        newQuote.className = 'newQuote'
+        newQuote.innerHTML = `<b>${marketData.payload}</b>`
+        quotes.appendChild(newQuote)
+
+        var elements = document.getElementsByClassName('newQuote')
+        if (elements.length > LIMIT) {
+            quotes.removeChild(elements[0])
+        }
     }
+
+    if (marketData.type == 2) {
+        // Append Trade data (Recycle after certain LIMIT)
+        const newTrade = document.createElement('div')
+        newTrade.className = 'newTrade'
+        newTrade.innerHTML = `<b>${marketData.payload}</b>`
+        trades.appendChild(newTrade)
+
+        var elements = document.getElementsByClassName('newTrade')
+        if (elements.length > LIMIT) {
+            trades.removeChild(elements[0])
+        }
+    }
+
 
 }

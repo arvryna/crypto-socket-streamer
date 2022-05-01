@@ -54,12 +54,22 @@ func reader(connection *websocket.Conn) {
 
 		// you need to check if trading data is requested in frontend, before streaming the data out
 		// implement authentication
-		if true {
-			// first lets try to run this not in a separate go routine
-			for {
-				quote := <-fetcher.QuoteChan
-				quoteString := fmt.Sprintf("%v:%v:%v", quote.Symbol, quote.Ask, quote.Bid)
-				err := connection.WriteMessage(msgType, []byte(quoteString))
+		// first lets try to run this not in a separate go routine
+		for {
+			select {
+			case quote := <-fetcher.QuoteChan:
+				quoteString := fmt.Sprintf("%v:[ASK]%v:[BID]%v", quote.Symbol, quote.Ask, quote.Bid)
+				rawJSON := fmt.Sprintf(`{"type": 1, "payload": "%s"}`, quoteString)
+				err := connection.WriteMessage(msgType, []byte(rawJSON))
+				if err != nil {
+					log.Println("Error sending data to connection", err, connection.RemoteAddr(), "Closing connection")
+					connection.Close()
+					return
+				}
+			case trade := <-fetcher.TradeChan:
+				tradeString := fmt.Sprintf("%v:[Price]%v:[Size]%v", trade.Symbol, trade.Price, trade.Size)
+				rawJSON := fmt.Sprintf(`{"type": 2, "payload": "%s"}`, tradeString)
+				err := connection.WriteMessage(msgType, []byte(rawJSON))
 				if err != nil {
 					log.Println("Error sending data to connection", err, connection.RemoteAddr(), "Closing connection")
 					connection.Close()
@@ -67,6 +77,5 @@ func reader(connection *websocket.Conn) {
 				}
 			}
 		}
-
 	}
 }

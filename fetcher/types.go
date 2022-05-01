@@ -7,7 +7,9 @@ type Quote struct {
 }
 
 type Trade struct {
-	Symbol string `json:"S"`
+	Symbol string
+	Price  float64
+	Size   float64
 }
 
 type marketData struct {

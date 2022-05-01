@@ -7,7 +7,7 @@ body{
 .panel{
     padding: 10px;
     height: 300;
-    width: 200;
+    width: 300;
     color: red;
     border: solid lightgreen 5px
 }
