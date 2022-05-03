@@ -12,6 +12,27 @@ console.log(socket)
 const quotes = document.getElementById('quotes')
 const trades = document.getElementById('trades')
 
+// Setting up graph
+// https://jsfiddle.net/TradingView/yozeu6k1/
+var chart = LightweightCharts.createChart(document.getElementById('chart'), {
+    width: 600,
+height: 700,
+    crosshair: {
+        mode: LightweightCharts.CrosshairMode.Normal,
+    },
+});
+
+var candleSeries = chart.addCandlestickSeries();
+
+var data = [
+	{ time: '2018-10-19', open: 54.62, high: 55.50, low: 54.52, close: 54.90 },
+	{ time: '2018-10-22', open: 55.08, high: 55.27, low: 54.61, close: 54.98 },
+	{ time: '2018-10-23', open: 56.09, high: 57.47, low: 56.09, close: 57.21 },
+]
+
+candleSeries.setData(data);
+
+
 socket.onopen = () => {
     console.log("Client connected with socket...")
     socket.send("Ping")

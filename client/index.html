@@ -1,13 +1,25 @@
 <html>
-    <head>
-        <title>socfetcher</title>
-        <link rel="stylesheet" type="text/css" href="style.css"/>
-    </head>
-    <body>
-        <h1>Quotes</h1>
-        <div id="quotes" class="panel"></div>
-        <h1>Trades</h1>
-        <div id="trades" class="panel"></div>
-        <script src="main.js"></script>
-    </body>
+
+<head>
+    <title>socfetcher</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <div id="left">
+            <h1>Quotes</h1>
+            <div id="quotes" class="panel"></div>
+            <h1>Trades</h1>
+            <div id="trades" class="panel"></div>
+        </div>
+        <div id="right">
+            <h1>Chart</h1>
+            <div id="chart"></div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+
 </html>

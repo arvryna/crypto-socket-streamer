@@ -6,8 +6,26 @@ body{
 
 .panel{
     padding: 10px;
-    height: 300;
     width: 300;
+    height: 300;
     color: red;
     border: solid lightgreen 5px
+}
+
+#left {
+    width: 400px;
+    float: left;
+}
+
+#right{
+    padding: 10px;
+    width: 800;
+    height: 800;
+    float: right;
+    /* border: solid lightgreen 5px; */
+}
+
+#container{
+    width: 1300;
+    height: 1000;
 }
