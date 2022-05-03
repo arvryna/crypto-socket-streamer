@@ -12,25 +12,48 @@ console.log(socket)
 const quotes = document.getElementById('quotes')
 const trades = document.getElementById('trades')
 
+const bars = [];
+
 // Setting up graph
 // https://jsfiddle.net/TradingView/yozeu6k1/
 var chart = LightweightCharts.createChart(document.getElementById('chart'), {
     width: 600,
-height: 700,
+    height: 700,
+    layout:{
+        backgroundColor: '#000000',
+        textColor: '#ffffff',
+    },
     crosshair: {
         mode: LightweightCharts.CrosshairMode.Normal,
     },
+    grid: {
+		vertLines: {
+			color: '#404040',
+		},
+		horzLines: {
+			color: '#404040',
+		},
+	},
+    priceScale: {
+		borderColor: '#cccccc',
+	},
+	timeScale: {
+		borderColor: '#cccccc',
+		timeVisible: true,
+	},
 });
 
 var candleSeries = chart.addCandlestickSeries();
 
 var data = [
-	{ time: '2018-10-19', open: 54.62, high: 55.50, low: 54.52, close: 54.90 },
-	{ time: '2018-10-22', open: 55.08, high: 55.27, low: 54.61, close: 54.98 },
-	{ time: '2018-10-23', open: 56.09, high: 57.47, low: 56.09, close: 57.21 },
+    { time: '2022-02-19', open: 54.62, high: 55.50, low: 54.52, close: 54.90 },
+    { time: '2022-02-22', open: 55.08, high: 55.27, low: 54.61, close: 54.98 },
+    { time: '2022-02-23', open: 56.09, high: 57.47, low: 56.09, close: 57.21 },
 ]
 
 candleSeries.setData(data);
+
+const currentBar = data[data.length - 1]
 
 
 socket.onopen = () => {
@@ -41,6 +64,8 @@ socket.onopen = () => {
 socket.onclose = () => {
     console.log("Socket closed with socket...")
 }
+
+const ltime = 1645574400
 
 socket.onmessage = function (event) {
     const LIMIT = 20
@@ -70,6 +95,22 @@ socket.onmessage = function (event) {
         if (elements.length > LIMIT) {
             trades.removeChild(elements[0])
         }
+
+        bars.push(marketData.p)
+
+        //this is to update the last bar and showing activity
+        var open = bars[0];
+        var closed = bars[bars.length - 1];
+        var high = Math.max(...bars)
+        var low = Math.min(...bars)
+
+        candleSeries.update({
+            time: ltime +  60,
+            open: open,
+            high: high,
+            low: low,
+            close: closed
+        })
     }
 
 

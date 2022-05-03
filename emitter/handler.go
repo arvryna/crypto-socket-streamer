@@ -68,7 +68,7 @@ func reader(connection *websocket.Conn) {
 				}
 			case trade := <-fetcher.TradeChan:
 				tradeString := fmt.Sprintf("%v:[Price]%v:[Size]%v", trade.Symbol, trade.Price, trade.Size)
-				rawJSON := fmt.Sprintf(`{"type": 2, "payload": "%s"}`, tradeString)
+				rawJSON := fmt.Sprintf(`{"type": 2, "payload": "%s", "p": "%v"}`, tradeString, trade.Price)
 				err := connection.WriteMessage(msgType, []byte(rawJSON))
 				if err != nil {
 					log.Println("Error sending data to connection", err, connection.RemoteAddr(), "Closing connection")
