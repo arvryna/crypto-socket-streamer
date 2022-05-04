@@ -75,6 +75,16 @@ func reader(connection *websocket.Conn) {
 					connection.Close()
 					return
 				}
+
+			case bar := <-fetcher.BarChan:
+				rawJSON := fmt.Sprintf(`{"type": 3, "high": "%v", "low":"%v", "open":"%v", "close":"%v"}`, bar.High, bar.Low, bar.Open, bar.Close)
+				err := connection.WriteMessage(msgType, []byte(rawJSON))
+				if err != nil {
+					log.Println("Error sending data to connection", err, connection.RemoteAddr(), "Closing connection")
+					connection.Close()
+					return
+				}
+
 			}
 		}
 	}

@@ -11,6 +11,7 @@ import (
 var (
 	QuoteChan chan Quote
 	TradeChan chan Trade
+	BarChan   chan Bar
 )
 
 func fetchMessages(conn *websocket.Conn) {
@@ -44,6 +45,15 @@ func fetchMessages(conn *websocket.Conn) {
 				Size:   market.Size,
 			}
 		}
+
+		if market.Type == "b" {
+			BarChan <- Bar{
+				Open:  market.Open,
+				Close: market.Close,
+				High:  market.High,
+				Low:   market.Low,
+			}
+		}
 	}
 }
 
@@ -55,6 +65,7 @@ func Init() {
 	// Initiaze channels:
 	QuoteChan = make(chan Quote, BUFFER)
 	TradeChan = make(chan Trade, BUFFER)
+	BarChan = make(chan Bar, BUFFER)
 	url := "wss://stream.data.alpaca.markets/v1beta1/crypto"
 
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil)

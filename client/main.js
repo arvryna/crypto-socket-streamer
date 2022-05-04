@@ -11,8 +11,8 @@ console.log(socket)
 // Setting up UI elements:
 const quotes = document.getElementById('quotes')
 const trades = document.getElementById('trades')
-
-const bars = [];
+const bars = []
+const barPrice = [];
 
 // Setting up graph
 // https://jsfiddle.net/TradingView/yozeu6k1/
@@ -53,8 +53,7 @@ var data = [
 
 candleSeries.setData(data);
 
-const currentBar = data[data.length - 1]
-
+// const currentBar = data[data.length - 1]
 
 socket.onopen = () => {
     console.log("Client connected with socket...")
@@ -65,7 +64,7 @@ socket.onclose = () => {
     console.log("Socket closed with socket...")
 }
 
-const ltime = 1645574400
+var ltime = 1645574400
 
 socket.onmessage = function (event) {
     const LIMIT = 20
@@ -96,16 +95,17 @@ socket.onmessage = function (event) {
             trades.removeChild(elements[0])
         }
 
-        bars.push(marketData.p)
+        barPrice.push(marketData.p)
 
         //this is to update the last bar and showing activity
-        var open = bars[0];
-        var closed = bars[bars.length - 1];
-        var high = Math.max(...bars)
-        var low = Math.min(...bars)
+        var open = barPrice[0];
+        var closed = barPrice[barPrice.length - 1];
+        var high = Math.max(...barPrice)
+        var low = Math.min(...barPrice)
+        ltime = ltime + 60
 
         candleSeries.update({
-            time: ltime +  60,
+            time: ltime,
             open: open,
             high: high,
             low: low,
@@ -113,5 +113,11 @@ socket.onmessage = function (event) {
         })
     }
 
+    if (marketData.type == 3){
+        marketData.time = ltime
+        console.log(marketData)
+        bars.push(marketData)
+        candleSeries.setData(bars);
+    }
 
 }
