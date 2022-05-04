@@ -63,7 +63,7 @@ func Init() {
 	}
 
 	// Authenticate with Trading API
-	auth := map[string]string{"action": "auth", "key": "PK4WJX5BHJZBRYK4DGJQ", "secret": "yjdiafw56zgxVyR48LHrXCuCoSBTK7gAe5Vbrdv1"}
+	auth := map[string]string{"action": "auth", "key": "PKYSDC0NHHAIYTKUID44", "secret": "o4an6wLWk5WKnd1FFeBcGxX1kfVBl1ZfckbJvaCq"}
 	conn.WriteJSON(auth)
 
 	// Subscribe to these events
