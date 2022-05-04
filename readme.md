@@ -6,4 +6,4 @@ Over the weekend, I built a side project, a web socket streaming server (in Gola
 # NOTE:
 -should not be used as metric to see the code quality / consumption . this is just an experimental work
 
-![screen](http://url/to/img.png)
+![screen](https://github.com/arvryna/crypto-socket-streamer/blob/main/docs/screen.png)
