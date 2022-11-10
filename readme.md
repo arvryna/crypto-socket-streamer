@@ -4,6 +4,6 @@ Over the weekend, I built a side project, a web socket streaming server (in Gola
 ->> fetcher(FAN-IN) -> emitter(FAN-OUT) ->> client
 
 # NOTE:
--should not be used as metric to see the code quality / consumption . this is just an experimental work
+-should not be used as metric to see the code quality / consumption . this is just an experimental work and built for fun to push a bunch of live trade data in web socket, just watch the flow and enjoy : )
 
 ![screen](https://github.com/arvryna/crypto-socket-streamer/blob/main/docs/screen.png)
